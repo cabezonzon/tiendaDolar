@@ -12,4 +12,6 @@ router.get('/getQuantityOfProductByType',  ProductController.getQuantityOfProduc
 
 router.get('/getProductByName/:title',  ProductController.getProductByName);
 
+router.put('/buyProduct/:id/:cant',  ProductController.buyProduct);
+
 module.exports = router;
