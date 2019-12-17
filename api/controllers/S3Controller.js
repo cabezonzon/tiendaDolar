@@ -23,8 +23,8 @@ exports.doDownload = (req, res) => {
 	s3ClientResponse.on('end', function() {	
 		var myObject = JSON.parse(jsonStr);	
 		mongoose.connect(url, async function(err,db) {
-		await db.collection('product').remove();
-		await db.collection('product').insertMany(myObject.products, function(err, records) {
+		await db.collection('products').remove();
+		await db.collection('products').insertMany(myObject.products, function(err, records) {
 			if (err) throw err;
             console.log("record added");
             res.status(200).json({messagge:"database downloaded and saved"});				

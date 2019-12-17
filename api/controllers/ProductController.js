@@ -1,57 +1,49 @@
-const mongoose = require('mongoose');
-var url = "mongodb://localhost/miniverso";
 var Product = require('../models/product');
 
 exports.getProductMoreExpensive = (req, res) => {
-
-	mongoose.connect(url, function(err, db) {
-		if (err) throw err;	
-		db.collection("product").find().sort({price : -1}).limit(1).toArray(function(err, result) {
-		  if (err) throw err;
-		  if (result){
-			res.json(result);
-		  }else{
-			res.send(JSON.stringify({
-                err : 'Error'
-            }))
-		  }
-		  db.close();		 
+		const query = Product.find();
+		query.collection(Product.collection);
+		query.sort({price : -1});
+		query.limit(1).exec(function(err, result) {
+			if (err) throw err;
+			if (result){
+			  res.json(result);
+			}else{
+			  res.send(JSON.stringify({
+				  err : 'Error'
+			  }))
+			}
 		});
-	  });
 }
 
 exports.getFiveProductsMoreCheap = (req, res) => {
-
-	mongoose.connect(url, function(err, db) {
+	const query = Product.find();
+	query.collection(Product.collection);
+	query.sort({price : 1});
+	query.limit(5).exec(function(err, result) {
 		if (err) throw err;
-
-		db.collection("product").find().sort({price : 1}).limit(5).toArray(function(err, result) {
-		  if (err) throw err;
-		  if (result){
-			res.json(result);
-		  }else{
-			res.send(JSON.stringify({
-                err : 'Error'
-            }))
-		  }
-		  db.close();		 
+			if (result){
+			  res.json(result);
+			}else{
+			  res.send(JSON.stringify({
+				  err : 'Error'
+			  }))
+			}
 		});
-	  });
 }
 
 exports.getQuantityOfProductByType = (req, res) => {
-	mongoose.connect(url, function(err, db) {
-		db.collection('product').aggregate(
+	Product.aggregate(
 			[
 			  {
 				$group:
 				  {
 					_id: {type:  "$type"},				
-					count: { $sum: 1 }
+					quantity: { $sum: 1 }
 				  }
 			  }
 			]
-		 ).toArray(function(err, result) {
+		 ).exec(function(err, result) {
 			if (err) throw err;
 			if (result){
 			  res.json(result);
@@ -59,27 +51,22 @@ exports.getQuantityOfProductByType = (req, res) => {
 			  res.send(JSON.stringify({
 				  err : 'Error'
 			  }))
-			}
-			db.close();		 
-		  });
+			}		 
 	  });
 }		
 
 exports.getProductByName = (req, res) => {
-	mongoose.connect(url, function(err, db) {
-		var title = req.params.title;
-		db.collection("product").find({"title":new RegExp(title, 'i') }).toArray(function(err, result) {
-			if (err) throw err;
-			if (result){
-			  res.json(result);
-			}else{
-			  res.send(JSON.stringify({
-				  err : 'Error'
-			  }))
-			}
-			db.close();		 
-		});
+	var title = req.params.title;
+	const query = Product.find({"title":new RegExp(title, 'i') });
+	query.exec(function(err, result) {
+		if (err) throw err;
+		if (result){
+		  res.json(result);
+		}else{
+		  res.send(JSON.stringify({
+			  err : 'Error'
+		  }))
+		}		
 	});
+	
 }
-
-
